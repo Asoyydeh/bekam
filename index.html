@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Klinik Bekam BRHC — Manajemen Klinik</title>
+<style>
+/* Klinik Bekam BRHC — styles.css
+   Desain bersih & profesional untuk klinik (aksen teal medis di atas
+   latar terang), font sistem tanpa dependensi eksternal, responsif
+   untuk HP dan desktop. */
+
+:root {
+  --primary: #0e7c66;
+  --primary-dark: #0a5c4c;
+  --primary-darker: #084a3c;
+  --primary-soft: #e3f2ee;
+  --primary-softer: #f0f7f5;
+  --accent: #d97706;
+  --bg: #f2f5f4;
+  --card: #ffffff;
+  --text: #1c2b27;
+  --text-strong: #10201c;
+  --muted: #6d7d78;
+  --border: #e3e9e7;
+  --border-strong: #d3ddd9;
+  --green: #15803d;
+  --green-bg: #dcfce7;
+  --red: #b91c1c;
+  --red-bg: #fee2e2;
+  --amber: #b45309;
+  --amber-bg: #fef3c7;
+  --blue: #1d4ed8;
+  --blue-bg: #dbeafe;
+  --pink: #be185d;
+  --pink-bg: #fce7f3;
+  --teal: #0e7c66;
+  --teal-bg: #e3f2ee;
+  --radius: 14px;
+  --radius-sm: 10px;
+  --shadow: 0 1px 2px rgba(16, 32, 28, .05), 0 4px 16px rgba(16, 32, 28, .05);
+  --shadow-lg: 0 12px 40px rgba(16, 32, 28, .18);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.55;
+  font-size: 15px;
+}
+
+.app { display: flex; min-height: 100vh; }
+
+/* ---------- Sidebar ---------- */
+.sidebar {
+  width: 264px;
+  background: linear-gradient(180deg, #0b2e27 0%, #0d3a30 100%);
+  color: #d7e3df;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  flex-shrink: 0;
+  z-index: 60;
+}
+
+.brand {
+  display: flex; align-items: center; gap: 12px;
+  padding: 20px 18px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, .09);
+}
+.brand-logo {
+  width: 46px; height: 46px; border-radius: 13px;
+  background: linear-gradient(135deg, #12a184, #0e7c66);
+  color: #fff; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .28);
+}
+.brand-logo svg { width: 26px; height: 26px; }
+.brand-text { min-width: 0; }
+.brand-text strong {
+  display: block; color: #fff; font-size: 15.5px; line-height: 1.25;
+  letter-spacing: .1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.brand-text span { font-size: 12px; color: #93b3aa; }
+
+.nav { padding: 14px 12px 8px; overflow-y: auto; flex: 1; }
+.nav-label {
+  font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: #7fa398; padding: 14px 12px 7px;
+}
+.nav-label:first-child { padding-top: 2px; }
+.nav-item {
+  display: flex; align-items: center; gap: 11px; width: 100%; text-align: left;
+  background: none; border: none; color: #cbdeda;
+  padding: 10px 12px; border-radius: 10px; cursor: pointer;
+  font-size: 14px; font-weight: 500; font-family: inherit; margin-bottom: 2px;
+  transition: background .15s, color .15s;
+}
+.nav-item .nav-ico { font-size: 16px; line-height: 1; width: 20px; text-align: center; flex-shrink: 0; }
+.nav-item:hover { background: rgba(255, 255, 255, .07); color: #fff; }
+.nav-item.active {
+  background: linear-gradient(90deg, #12a184, #0e7c66);
+  color: #fff; font-weight: 650;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, .25);
+}
+
+.sidebar-foot {
+  padding: 14px 18px; font-size: 12px; line-height: 1.5; color: #93b3aa;
+  border-top: 1px solid rgba(255, 255, 255, .09);
+}
+
+/* Backdrop (mobile sidebar) */
+.backdrop {
+  display: none; position: fixed; inset: 0; z-index: 55;
+  background: rgba(9, 26, 22, .5);
+}
+.backdrop.show { display: block; }
+
+/* ---------- Main / topbar ---------- */
+.main { flex: 1; min-width: 0; padding: 0 28px 48px; }
+.topbar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 18px 0 16px;
+  position: sticky; top: 0; z-index: 40;
+  background: rgba(242, 245, 244, .88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.topbar-title { min-width: 0; }
+.topbar-title h1 { font-size: 23px; line-height: 1.2; color: var(--text-strong); letter-spacing: -.2px; }
+.topbar-title span { font-size: 13px; color: var(--muted); }
+.menu-btn {
+  display: none; background: var(--card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 9px 12px; font-size: 17px; line-height: 1;
+  cursor: pointer; color: var(--text); box-shadow: var(--shadow); flex-shrink: 0;
+}
+.menu-btn:active { transform: scale(.96); }
+
+/* ---------- Pages ---------- */
+.page { display: none; }
+.page.active { display: block; animation: fade .22s ease; }
+@keyframes fade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+
+/* ---------- Cards & stats ---------- */
+.stats-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px; margin-bottom: 18px;
+}
+.stat-card {
+  position: relative;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  padding: 18px 18px 16px; overflow: hidden;
+}
+.stat-card::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+  background: var(--primary);
+}
+.stat-card.blue::before { background: var(--blue); }
+.stat-card.pink::before { background: var(--pink); }
+.stat-card.green::before { background: var(--green); }
+.stat-card.amber::before { background: var(--amber); }
+.stat-card.red::before { background: var(--red); }
+.stat-icon {
+  position: absolute; top: 14px; right: 14px;
+  width: 42px; height: 42px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 21px; background: var(--teal-bg);
+}
+.stat-card.blue .stat-icon { background: var(--blue-bg); }
+.stat-card.pink .stat-icon { background: var(--pink-bg); }
+.stat-card.green .stat-icon { background: var(--green-bg); }
+.stat-card.amber .stat-icon { background: var(--amber-bg); }
+.stat-card.red .stat-icon { background: var(--red-bg); }
+.stat-label { font-size: 12.5px; font-weight: 600; color: var(--muted); margin-bottom: 7px; padding-right: 52px; line-height: 1.35; }
+.stat-value { font-size: 29px; font-weight: 800; line-height: 1.05; color: var(--text-strong); letter-spacing: -.5px; word-break: break-word; }
+.stat-sub { font-size: 12.5px; color: var(--muted); margin-top: 5px; }
+
+.card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  padding: 20px; margin-bottom: 18px;
+}
+.card h2 { font-size: 16px; margin-bottom: 12px; color: var(--text-strong); }
+.card-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+.card-head h2 { margin-bottom: 0; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+.grid-2 .card { margin-bottom: 0; }
+
+/* ---------- Toolbar / form ---------- */
+.toolbar { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+.toolbar input, .toolbar select { flex: 1; min-width: 150px; }
+
+input, select, textarea {
+  font-family: inherit; font-size: 14.5px; color: var(--text);
+  padding: 10px 12px; border: 1px solid var(--border-strong); border-radius: 10px;
+  background: #fff; width: 100%;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none; border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(14, 124, 102, .18);
+}
+input::placeholder, textarea::placeholder { color: #9aa8a3; }
+label { display: block; font-size: 13.5px; font-weight: 600; margin-bottom: 13px; color: var(--text); }
+label input, label select, label textarea { margin-top: 6px; font-weight: 400; }
+.inline-label { display: inline-flex; align-items: center; gap: 7px; margin: 0; white-space: nowrap; }
+.inline-label input { width: 84px; margin: 0; }
+.hint { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 10px 16px; border-radius: 10px; cursor: pointer;
+  border: 1px solid var(--border-strong); background: #fff; color: var(--text);
+  font-size: 14px; font-family: inherit; font-weight: 600; text-decoration: none;
+  transition: background .15s, border-color .15s, transform .05s;
+  white-space: nowrap;
+}
+.btn:hover { background: #f6f8f7; border-color: #c3cfca; }
+.btn:active { transform: scale(.98); }
+.btn-primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
+.btn-danger { background: var(--red); border-color: var(--red); color: #fff; }
+.btn-danger:hover { background: #991b1b; border-color: #991b1b; }
+.btn-warning { background: var(--amber); border-color: var(--amber); color: #fff; }
+.btn-warning:hover { background: #92400e; border-color: #92400e; }
+.btn-sm { padding: 7px 12px; font-size: 13px; }
+.btn-col { display: flex; flex-direction: column; gap: 10px; margin: 12px 0; }
+.btn-col .btn { width: 100%; }
+
+.finance-summary .fin-row {
+  display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  padding: 11px 0; border-bottom: 1px solid var(--border); font-size: 15px;
+}
+.finance-summary .fin-row.total { border-bottom: none; font-size: 17px; padding-top: 14px; }
+.finance-summary .fin-row strong { white-space: nowrap; }
+
+/* ---------- Tables ---------- */
+.table-wrap { overflow-x: auto; margin: 0 -4px; padding: 0 4px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 560px; }
+th, td { padding: 11px 12px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: middle; }
+th {
+  font-size: 11.5px; text-transform: uppercase; letter-spacing: .5px;
+  color: var(--muted); background: #f7f9f8;
+}
+tbody tr:hover td { background: #f7f9f8; }
+tbody tr:last-child td { border-bottom: none; }
+td .sub { font-size: 12.5px; color: var(--muted); margin-top: 1px; }
+
+.badge {
+  display: inline-block; padding: 4px 10px; border-radius: 999px;
+  font-size: 12px; font-weight: 700; white-space: nowrap; font-family: inherit;
+}
+button.badge { cursor: pointer; }
+.badge-green { background: var(--green-bg); color: var(--green); }
+.badge-red { background: var(--red-bg); color: var(--red); }
+.badge-amber { background: var(--amber-bg); color: var(--amber); }
+.badge-blue { background: var(--blue-bg); color: var(--blue); }
+.badge-grey { background: #e5e7eb; color: #374151; }
+
+.text-green { color: var(--green); }
+.text-red { color: var(--red); }
+
+.action-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+.icon-btn {
+  background: #f1f4f3; border: 1px solid var(--border); border-radius: 8px;
+  padding: 5px 10px; font-size: 12.5px; font-weight: 600; cursor: pointer; font-family: inherit;
+  color: var(--text); transition: background .15s;
+}
+.icon-btn:hover { background: #e3e9e7; }
+.icon-btn.danger { background: var(--red-bg); color: var(--red); border-color: #fecaca; }
+.icon-btn.danger:hover { background: #fdc9c9; }
+
+/* ---------- Lists ---------- */
+.list { display: flex; flex-direction: column; gap: 10px; }
+.list-col { display: flex; flex-direction: column; gap: 12px; }
+.list-item {
+  display: flex; justify-content: space-between; gap: 10px; align-items: flex-start;
+  padding: 13px 14px; border: 1px solid var(--border); border-radius: 12px; background: #fff;
+}
+.list-item .li-title { font-weight: 700; color: var(--text-strong); }
+.list-item .li-sub { font-size: 13px; color: var(--muted); margin-top: 2px; line-height: 1.5; }
+.record-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px; }
+.record-card h3 { font-size: 15.5px; margin-bottom: 4px; color: var(--text-strong); }
+.record-card .meta { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+.record-card dl { display: grid; grid-template-columns: 130px 1fr; gap: 5px 12px; font-size: 14px; }
+.record-card dt { color: var(--muted); }
+.record-card .record-actions { margin-top: 14px; display: flex; gap: 6px; }
+
+.empty { text-align: center; color: var(--muted); padding: 30px 12px; font-size: 14px; }
+.sample-tag {
+  font-size: 10.5px; font-weight: 800; letter-spacing: .4px; color: var(--amber);
+  background: var(--amber-bg); border-radius: 999px; padding: 2px 8px; margin-left: 7px;
+  vertical-align: middle; white-space: nowrap;
+}
+
+/* ---------- Modal & toast ---------- */
+.modal-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(9, 26, 22, .52);
+  z-index: 100; align-items: flex-start; justify-content: center; padding: 24px 14px;
+  overflow-y: auto; backdrop-filter: blur(2px);
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: #fff; border-radius: 18px; padding: 24px; width: 100%; max-width: 540px;
+  box-shadow: var(--shadow-lg); margin: auto 0;
+  animation: pop .18s ease;
+}
+@keyframes pop { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
+.modal h2 { font-size: 18.5px; margin-bottom: 16px; color: var(--text-strong); }
+.modal h3 { color: var(--text-strong); }
+.modal .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; flex-wrap: wrap; }
+.modal .form-actions .btn { flex: 0 0 auto; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+
+.toast {
+  position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(90px);
+  background: #122b25; color: #fff; padding: 12px 20px; border-radius: 999px;
+  font-size: 14px; font-weight: 600; z-index: 200; opacity: 0; transition: all .25s;
+  pointer-events: none; max-width: 92vw; text-align: center;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, .3);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1100px) {
+  .grid-2 { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    position: fixed; left: 0; top: 0; transform: translateX(-106%);
+    transition: transform .25s ease; box-shadow: none;
+  }
+  .sidebar.open { transform: translateX(0); box-shadow: 0 0 50px rgba(0, 0, 0, .4); }
+  .menu-btn { display: inline-flex; }
+  .main { padding: 0 14px 36px; }
+  .topbar-title h1 { font-size: 20px; }
+  .stat-value { font-size: 24px; }
+  .stat-icon { width: 36px; height: 36px; font-size: 18px; }
+  .form-row { grid-template-columns: 1fr; }
+  .record-card dl { grid-template-columns: 1fr; gap: 1px 0; }
+  .record-card dt { font-weight: 700; color: var(--text); }
+  .record-card dd { margin-bottom: 8px; }
+  .toolbar .btn { flex: 1 1 auto; }
+}
+
+@media (max-width: 420px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .stat-card { padding: 14px 13px 12px; }
+  .stat-label { font-size: 11.5px; padding-right: 40px; }
+  .stat-value { font-size: 21px; }
+  .stat-icon { width: 30px; height: 30px; font-size: 15px; top: 11px; right: 11px; border-radius: 9px; }
+  .card { padding: 16px; }
+  .topbar { padding-top: 14px; }
+}
+
+</style>
+</head>
+<body>
+<noscript><p style="padding:16px;text-align:center;background:#fef3c7;color:#92400e;font-weight:600">Aplikasi ini membutuhkan JavaScript. Mohon aktifkan JavaScript di browser Anda.</p></noscript>
+<div class="app">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5c-3.6 0-6.2 2.9-6.2 6.7 0 2.3 1.2 4.2 3 5.3V18h6.4v-2.5c1.8-1.1 3-3 3-5.3 0-3.8-2.6-6.7-6.2-6.7Z" fill="#fff" stroke="none"/><rect x="8.6" y="19.4" width="6.8" height="1.8" rx=".9" fill="#fff" stroke="none"/><path d="M9.5 8.5c.4-1 1.3-1.7 2.5-1.7" stroke="#0e7c66" stroke-width="1.6"/></svg></div>
+      <div class="brand-text">
+        <strong id="brandName">Klinik Bekam BRHC</strong>
+        <span>Manajemen Klinik</span>
+      </div>
+    </div>
+    <nav class="nav" id="mainNav">
+      <div class="nav-label">Menu Utama</div>
+      <button class="nav-item active" data-page="dashboard"><span class="nav-ico">📊</span>Dashboard</button>
+      <button class="nav-item" data-page="pasien"><span class="nav-ico">👥</span>Pasien</button>
+      <button class="nav-item" data-page="jadwal"><span class="nav-ico">📅</span>Jadwal</button>
+      <button class="nav-item" data-page="rekam"><span class="nav-ico">🩺</span>Rekam Medis</button>
+      <button class="nav-item" data-page="penjualan"><span class="nav-ico">🛒</span>Penjualan</button>
+      <button class="nav-item" data-page="keuangan"><span class="nav-ico">💰</span>Keuangan</button>
+      <div class="nav-label">Laporan</div>
+      <button class="nav-item" data-page="bonus"><span class="nav-ico">🎁</span>Laporan Bonus</button>
+      <button class="nav-item" data-page="setor"><span class="nav-ico">📥</span>Laporan Setor Omset</button>
+      <div class="nav-label">Lainnya</div>
+      <button class="nav-item" data-page="pengaturan"><span class="nav-ico">⚙️</span>Pengaturan</button>
+    </nav>
+    <div class="sidebar-foot" id="sidebarFoot"></div>
+  </aside>
+  <div class="backdrop" id="backdrop" onclick="closeSidebar()"></div>
+
+  <!-- Main -->
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="Menu">☰</button>
+      <div class="topbar-title">
+        <h1 id="pageTitle">Dashboard</h1>
+        <span id="todayLabel"></span>
+      </div>
+    </header>
+
+    <!-- ============ DASHBOARD ============ -->
+    <section class="page active" id="page-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card blue">
+          <div class="stat-icon">👨</div>
+          <div class="stat-label">Pasien Laki-laki Hari Ini</div>
+          <div class="stat-value" id="statMale">0</div>
+          <div class="stat-sub">orang</div>
+        </div>
+        <div class="stat-card pink">
+          <div class="stat-icon">👩</div>
+          <div class="stat-label">Pasien Perempuan Hari Ini</div>
+          <div class="stat-value" id="statFemale">0</div>
+          <div class="stat-sub">orang</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-icon">🩺</div>
+          <div class="stat-label">Total Kunjungan Hari Ini</div>
+          <div class="stat-value" id="statVisits">0</div>
+          <div class="stat-sub">kunjungan</div>
+        </div>
+        <div class="stat-card amber">
+          <div class="stat-icon">💰</div>
+          <div class="stat-label">Omset Hari Ini</div>
+          <div class="stat-value" id="statRevenue">Rp0</div>
+          <div class="stat-sub">penjualan + pemasukan</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head">
+            <h2>📅 Jadwal Hari Ini</h2>
+            <button class="btn btn-sm" onclick="goPage('jadwal')">Lihat Semua</button>
+          </div>
+          <div id="dashboardSchedule" class="list"></div>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <h2>💰 Ringkasan Keuangan Bulan Ini</h2>
+            <button class="btn btn-sm" onclick="goPage('keuangan')">Lihat Detail</button>
+          </div>
+          <div class="finance-summary">
+            <div class="fin-row"><span>Pemasukan</span><strong class="text-green" id="dashIn">Rp0</strong></div>
+            <div class="fin-row"><span>Pengeluaran</span><strong class="text-red" id="dashOut">Rp0</strong></div>
+            <div class="fin-row total"><span>Saldo Bulan Ini</span><strong id="dashBalance">Rp0</strong></div>
+          </div>
+          <div class="card-head" style="margin-top:16px"><h2>🕒 Kunjungan Terakhir</h2></div>
+          <div id="dashboardRecent" class="list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PASIEN ============ -->
+    <section class="page" id="page-pasien">
+      <div class="toolbar">
+        <input type="search" id="patientSearch" placeholder="🔍 Cari nama / no HP pasien..." oninput="renderPatients()">
+        <button class="btn btn-primary" onclick="openPatientForm()">+ Tambah Pasien</button>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Nama</th><th>Jenis Kelamin</th><th>No HP</th><th>Umur</th><th>Alamat</th><th>Aksi</th></tr>
+            </thead>
+            <tbody id="patientTable"></tbody>
+          </table>
+        </div>
+        <div class="empty" id="patientEmpty" style="display:none">Belum ada pasien. Klik "Tambah Pasien" untuk menambahkan.</div>
+      </div>
+    </section>
+
+    <!-- ============ JADWAL ============ -->
+    <section class="page" id="page-jadwal">
+      <div class="toolbar">
+        <input type="date" id="scheduleDate" onchange="renderSchedules()">
+        <select id="scheduleStatusFilter" onchange="renderSchedules()">
+          <option value="">Semua Status</option>
+          <option value="Terjadwal">Terjadwal</option>
+          <option value="Selesai">Selesai</option>
+          <option value="Batal">Batal</option>
+        </select>
+        <button class="btn btn-primary" onclick="openScheduleForm()">+ Tambah Jadwal</button>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Jam</th><th>Pasien</th><th>Layanan</th><th>Terapis</th><th>Status</th><th>Aksi</th></tr>
+            </thead>
+            <tbody id="scheduleTable"></tbody>
+          </table>
+        </div>
+        <div class="empty" id="scheduleEmpty" style="display:none">Tidak ada jadwal pada tanggal ini.</div>
+      </div>
+    </section>
+
+    <!-- ============ REKAM MEDIS ============ -->
+    <section class="page" id="page-rekam">
+      <div class="toolbar">
+        <select id="recordPatientFilter" onchange="renderRecords()">
+          <option value="">Semua Pasien</option>
+        </select>
+        <button class="btn btn-primary" onclick="openRecordForm()">+ Tambah Rekam Medis</button>
+      </div>
+      <div id="recordList" class="list-col"></div>
+      <div class="empty card" id="recordEmpty" style="display:none">Belum ada rekam medis.</div>
+    </section>
+
+    <!-- ============ PENJUALAN ============ -->
+    <section class="page" id="page-penjualan">
+      <div class="toolbar">
+        <input type="month" id="salesMonth" onchange="renderSales()">
+        <button class="btn btn-primary" onclick="openSaleForm()">+ Catat Penjualan</button>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card green">
+          <div class="stat-icon">🛒</div>
+          <div class="stat-label">Total Penjualan Bulan Ini</div>
+          <div class="stat-value" id="salesTotal">Rp0</div>
+          <div class="stat-sub" id="salesCount">0 transaksi</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Tanggal</th><th>Item</th><th>Pasien</th><th>Jumlah</th><th>Harga Satuan</th><th>Total</th><th>Aksi</th></tr>
+            </thead>
+            <tbody id="salesTable"></tbody>
+          </table>
+        </div>
+        <div class="empty" id="salesEmpty" style="display:none">Belum ada penjualan pada bulan ini.</div>
+      </div>
+    </section>
+
+    <!-- ============ KEUANGAN ============ -->
+    <section class="page" id="page-keuangan">
+      <div class="toolbar wrap">
+        <select id="finPeriod" onchange="onFinPeriodChange()">
+          <option value="harian">Harian</option>
+          <option value="mingguan">Mingguan</option>
+          <option value="bulanan" selected>Bulanan</option>
+          <option value="tahunan">Tahunan</option>
+        </select>
+        <input type="date" id="finDate" onchange="renderFinance()">
+        <input type="month" id="finMonth" onchange="renderFinance()">
+        <input type="number" id="finYear" min="2020" max="2100" onchange="renderFinance()" placeholder="Tahun">
+        <button class="btn btn-primary" onclick="openFinanceForm()">+ Catat Transaksi</button>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card green">
+          <div class="stat-icon">⬆️</div>
+          <div class="stat-label">Total Masuk <span id="finPeriodLabel"></span></div>
+          <div class="stat-value" id="finIn">Rp0</div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-icon">⬇️</div>
+          <div class="stat-label">Total Keluar <span class="fin-period-label"></span></div>
+          <div class="stat-value" id="finOut">Rp0</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-icon">💳</div>
+          <div class="stat-label">Saldo <span class="fin-period-label"></span></div>
+          <div class="stat-value" id="finBalance">Rp0</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Tanggal</th><th>Jenis</th><th>Kategori</th><th>Keterangan</th><th>Jumlah</th><th>Aksi</th></tr>
+            </thead>
+            <tbody id="financeTable"></tbody>
+          </table>
+        </div>
+        <div class="empty" id="financeEmpty" style="display:none">Belum ada transaksi pada periode ini.</div>
+      </div>
+    </section>
+
+    <!-- ============ LAPORAN BONUS ============ -->
+    <section class="page" id="page-bonus">
+      <div class="toolbar">
+        <input type="month" id="bonusMonth" onchange="renderBonus()">
+        <label class="inline-label">Bonus
+          <input type="number" id="bonusRate" min="0" max="100" step="0.5" value="10" onchange="saveBonusRate(); renderBonus()"> %
+        </label>
+        <span class="hint">dari omset layanan terapis</span>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Terapis</th><th>Layanan Selesai</th><th>Omset Layanan</th><th>Bonus (%)</th><th>Total Bonus</th></tr>
+            </thead>
+            <tbody id="bonusTable"></tbody>
+          </table>
+        </div>
+        <div class="empty" id="bonusEmpty" style="display:none">Belum ada layanan selesai pada bulan ini.</div>
+      </div>
+      <p class="hint">Bonus dihitung dari jadwal berstatus <strong>Selesai</strong> pada bulan yang dipilih.</p>
+    </section>
+
+    <!-- ============ LAPORAN SETOR OMSET ============ -->
+    <section class="page" id="page-setor">
+      <div class="toolbar">
+        <input type="month" id="setorMonth" onchange="renderSetor()">
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card amber">
+          <div class="stat-icon">📥</div>
+          <div class="stat-label">Total Omset Bulan Ini</div>
+          <div class="stat-value" id="setorTotal">Rp0</div>
+          <div class="stat-sub" id="setorSummary"></div>
+        </div>
+      </div>
+      <div class="card">
+        <p class="hint" style="margin-bottom:12px">Omset per hari = <strong>Penjualan</strong> + <strong>Pemasukan lain</strong> (keuangan masuk di luar kategori Penjualan). Tandai status setor per hari setelah omset disetorkan.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Tanggal</th><th>Penjualan</th><th>Pemasukan Lain</th><th>Total Omset</th><th>Status Setor</th></tr>
+            </thead>
+            <tbody id="setorTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PENGATURAN ============ -->
+    <section class="page" id="page-pengaturan">
+      <div class="grid-2">
+        <div class="card">
+          <h2>🏥 Profil Klinik</h2>
+          <form id="settingsForm" onsubmit="saveSettings(event)">
+            <label>Nama Klinik
+              <input type="text" id="setName" required>
+            </label>
+            <label>Alamat
+              <textarea id="setAddress" rows="3" placeholder="Alamat klinik..."></textarea>
+            </label>
+            <label>No. WhatsApp
+              <input type="text" id="setWa" placeholder="Contoh: 081234567890">
+            </label>
+            <button class="btn btn-primary" type="submit">💾 Simpan Pengaturan</button>
+          </form>
+        </div>
+        <div class="card">
+          <h2>💾 Data Aplikasi</h2>
+          <p class="hint">Semua data tersimpan di browser ini (localStorage). Ekspor secara berkala sebagai cadangan.</p>
+          <div class="btn-col">
+            <button class="btn" onclick="exportData()">⬇️ Ekspor Data (JSON)</button>
+            <label class="btn" for="importFile" style="text-align:center; cursor:pointer">⬆️ Impor Data (JSON)</label>
+            <input type="file" id="importFile" accept=".json,application/json" hidden onchange="importData(event)">
+          </div>
+          <hr>
+          <h2>🧹 Bersihkan Data</h2>
+          <div class="btn-col">
+            <button class="btn btn-warning" onclick="removeSampleData()">🗑️ Hapus Data Contoh</button>
+            <button class="btn btn-danger" onclick="resetAllData()">⚠️ Reset Semua Data</button>
+          </div>
+          <p class="hint">"Hapus Data Contoh" hanya menghapus data bertanda contoh. "Reset Semua Data" menghapus seluruh data (pasien, jadwal, rekam medis, penjualan, keuangan) dan mengembalikan data contoh awal.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this) closeModal()">
+  <div class="modal" id="modalBox"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* Klinik Bekam BRHC — app.js
+   Aplikasi manajemen klinik bekam berbasis single-page app.
+   Semua data tersimpan di localStorage browser (prefix brhc_).
+   Tanpa backend, tanpa dependensi eksternal. */
+
+'use strict';
+
+/* ================= Util ================= */
+const $ = (id) => document.getElementById(id);
+const uid = () => 'id' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const esc = (s) => String(s == null ? '' : s)
+  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
+const MONTHS_ID = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+const pad = (n) => String(n).padStart(2, '0');
+const dstr = (d) => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+const todayStr = () => dstr(new Date());
+const monthStr = () => todayStr().slice(0, 7);
+const fmtRp = (n) => 'Rp' + (Number(n) || 0).toLocaleString('id-ID');
+const fmtDate = (s) => {
+  if (!s) return '-';
+  const [y, m, d] = s.split('-').map(Number);
+  return d + ' ' + MONTHS_ID[m - 1] + ' ' + y;
+};
+const fmtMonth = (s) => {
+  if (!s) return '-';
+  const [y, m] = s.split('-').map(Number);
+  return MONTHS_ID[m - 1] + ' ' + y;
+};
+const ageOf = (birth) => {
+  if (!birth) return '-';
+  const b = new Date(birth + 'T00:00:00');
+  const now = new Date();
+  let age = now.getFullYear() - b.getFullYear();
+  const m = now.getMonth() - b.getMonth();
+  if (m < 0 || (m === 0 && now.getDate() < b.getDate())) age--;
+  return age + ' thn';
+};
+const daysInMonth = (ym) => {
+  const [y, m] = ym.split('-').map(Number);
+  return new Date(y, m, 0).getDate();
+};
+
+/* ================= Data (localStorage, prefix brhc_) ================= */
+const K = {
+  patients: 'brhc_patients',
+  schedules: 'brhc_schedules',
+  records: 'brhc_records',
+  sales: 'brhc_sales',
+  finance: 'brhc_finance',
+  settings: 'brhc_settings',
+  setor: 'brhc_setor',
+  bonusRate: 'brhc_bonus_rate',
+  seeded: 'brhc_seeded',
+};
+
+const load = (key, fallback) => {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch (e) { return fallback; }
+};
+const save = (key, val) => localStorage.setItem(key, JSON.stringify(val));
+
+let patients = load(K.patients, []);
+let schedules = load(K.schedules, []);
+let records = load(K.records, []);
+let sales = load(K.sales, []);
+let finance = load(K.finance, []);
+let settings = load(K.settings, { name: 'Klinik Bekam BRHC', address: '', wa: '' });
+let setor = load(K.setor, {});
+let bonusRate = Number(localStorage.getItem(K.bonusRate) || 10);
+
+/* ================= Layanan & terapis ================= */
+const SERVICES = [
+  { name: 'Bekam Basah (Sunnah)', price: 150000 },
+  { name: 'Bekam Kering', price: 100000 },
+  { name: 'Bekam Kepala', price: 120000 },
+  { name: 'Bekam Punggung', price: 150000 },
+  { name: 'Bekam Kaki', price: 100000 },
+  { name: 'Terapi Ruqyah', price: 200000 },
+  { name: 'Herbal / Obat Herbal', price: 50000 },
+  { name: 'Minyak Herbal', price: 75000 },
+];
+const THERAPISTS = ['Ust. Ahmad', 'Ust. Budi', 'Siti', 'Dewi'];
+const FIN_CATEGORIES_IN = ['Penjualan', 'Konsultasi', 'Donasi', 'Lainnya'];
+const FIN_CATEGORIES_OUT = ['Gaji Terapis', 'Beli Alat & Bahan', 'Sewa Tempat', 'Listrik & Air', 'Operasional', 'Lainnya'];
+
+/* ================= Data contoh ================= */
+function seedSampleData() {
+  if (localStorage.getItem(K.seeded)) return;
+  const today = new Date();
+  const d = (offset) => { const t = new Date(today); t.setDate(t.getDate() + offset); return dstr(t); };
+  const ym = monthStr();
+
+  const p1 = { id: uid(), name: 'Ahmad Hidayat (Contoh)', gender: 'Laki-laki', phone: '081234567001', birth: '1985-03-12', address: 'Jl. Merdeka No. 10', note: 'Langganan bekam bulanan', isSample: true };
+  const p2 = { id: uid(), name: 'Siti Maryam (Contoh)', gender: 'Perempuan', phone: '081234567002', birth: '1990-07-25', address: 'Jl. Kenanga No. 5', note: '', isSample: true };
+  const p3 = { id: uid(), name: 'Budi Prasetyo (Contoh)', gender: 'Laki-laki', phone: '081234567003', birth: '1978-11-02', address: 'Jl. Melati No. 22', note: 'Darah tinggi', isSample: true };
+  const p4 = { id: uid(), name: 'Dewi Lestari (Contoh)', gender: 'Perempuan', phone: '081234567004', birth: '1995-01-18', address: 'Jl. Anggrek No. 8', note: '', isSample: true };
+  patients = [p1, p2, p3, p4];
+
+  schedules = [
+    { id: uid(), patientId: p1.id, date: d(0), time: '09:00', therapist: 'Ust. Ahmad', service: 'Bekam Basah (Sunnah)', price: 150000, status: 'Terjadwal', isSample: true },
+    { id: uid(), patientId: p2.id, date: d(0), time: '10:30', therapist: 'Siti', service: 'Bekam Kering', price: 100000, status: 'Terjadwal', isSample: true },
+    { id: uid(), patientId: p3.id, date: d(0), time: '13:00', therapist: 'Ust. Budi', service: 'Bekam Punggung', price: 150000, status: 'Selesai', isSample: true },
+    { id: uid(), patientId: p4.id, date: d(1), time: '09:00', therapist: 'Dewi', service: 'Bekam Kepala', price: 120000, status: 'Terjadwal', isSample: true },
+  ];
+
+  records = [
+    { id: uid(), patientId: p3.id, date: d(0), complaint: 'Pegal di punggung dan leher', diagnosis: 'Kelelahan otot', bekamType: 'Bekam Basah', titik: 'Punggung atas, bahu', therapist: 'Ust. Budi', note: 'Dianjurkan istirahat cukup dan minum air hangat', isSample: true },
+    { id: uid(), patientId: p1.id, date: d(-6), complaint: 'Sering pusing', diagnosis: 'Darah tinggi ringan', bekamType: 'Bekam Basah', titik: 'Kepala, tengkuk', therapist: 'Ust. Ahmad', note: 'Kontrol tekanan darah minggu depan', isSample: true },
+  ];
+
+  sales = [
+    { id: uid(), date: d(0), patientId: p3.id, item: 'Bekam Punggung', qty: 1, price: 150000, isSample: true },
+    { id: uid(), date: d(0), patientId: null, item: 'Minyak Herbal', qty: 2, price: 75000, isSample: true },
+    { id: uid(), date: d(-1), patientId: p1.id, item: 'Bekam Basah (Sunnah)', qty: 1, price: 150000, isSample: true },
+    { id: uid(), date: d(-3), patientId: null, item: 'Herbal / Obat Herbal', qty: 3, price: 50000, isSample: true },
+  ];
+
+  finance = [
+    { id: uid(), date: d(0), type: 'Masuk', category: 'Konsultasi', desc: 'Konsultasi kesehatan', amount: 50000, isSample: true },
+    { id: uid(), date: d(-1), type: 'Masuk', category: 'Penjualan', desc: 'Penjualan layanan hari kemarin', amount: 150000, isSample: true },
+    { id: uid(), date: d(-2), type: 'Keluar', category: 'Beli Alat & Bahan', desc: 'Beli gelas bekam dan alkohol', amount: 250000, isSample: true },
+    { id: uid(), date: d(-5), type: 'Keluar', category: 'Listrik & Air', desc: 'Tagihan listrik bulan ' + fmtMonth(ym), amount: 180000, isSample: true },
+    { id: uid(), date: d(-7), type: 'Keluar', category: 'Gaji Terapis', desc: 'Gaji mingguan terapis', amount: 500000, isSample: true },
+  ];
+
+  persistAll();
+  localStorage.setItem(K.seeded, '1');
+}
+function persistAll() {
+  save(K.patients, patients);
+  save(K.schedules, schedules);
+  save(K.records, records);
+  save(K.sales, sales);
+  save(K.finance, finance);
+  save(K.settings, settings);
+  save(K.setor, setor);
+}
+
+/* ================= Helpers domain ================= */
+const patientById = (id) => patients.find((p) => p.id === id);
+const patientName = (id) => (patientById(id) || {}).name || '—';
+const saleTotal = (s) => (Number(s.qty) || 0) * (Number(s.price) || 0);
+/* Omset = penjualan + pemasukan keuangan di luar kategori "Penjualan"
+   (kategori Penjualan di keuangan adalah pencatatan ganda dari penjualan). */
+const omsetForDate = (date) =>
+  sales.filter((s) => s.date === date).reduce((a, s) => a + saleTotal(s), 0)
+  + finance.filter((f) => f.date === date && f.type === 'Masuk' && f.category !== 'Penjualan')
+    .reduce((a, f) => a + (Number(f.amount) || 0), 0);
+
+/* ================= Navigasi ================= */
+const PAGE_TITLES = {
+  dashboard: 'Dashboard', pasien: 'Data Pasien', jadwal: 'Jadwal Terapi',
+  rekam: 'Rekam Medis', penjualan: 'Penjualan', keuangan: 'Keuangan',
+  bonus: 'Laporan Bonus', setor: 'Laporan Setor Omset', pengaturan: 'Pengaturan',
+};
+function goPage(page) {
+  document.querySelectorAll('.nav-item').forEach((b) => b.classList.toggle('active', b.dataset.page === page));
+  document.querySelectorAll('.page').forEach((s) => s.classList.toggle('active', s.id === 'page-' + page));
+  $('pageTitle').textContent = PAGE_TITLES[page] || page;
+  $('sidebar').classList.remove('open');
+  $('backdrop').classList.remove('show');
+  ({ dashboard: renderDashboard, pasien: renderPatients, jadwal: renderSchedules,
+     rekam: renderRecords, penjualan: renderSales, keuangan: renderFinance,
+     bonus: renderBonus, setor: renderSetor, pengaturan: renderSettings }[page] || (() => {}))();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll('.nav-item').forEach((b) => b.addEventListener('click', () => goPage(b.dataset.page)));
+function closeSidebar() {
+  $('sidebar').classList.remove('open');
+  $('backdrop').classList.remove('show');
+}
+$('menuBtn').addEventListener('click', () => {
+  const open = $('sidebar').classList.toggle('open');
+  $('backdrop').classList.toggle('show', open);
+});
+
+/* ================= Toast & modal ================= */
+let toastTimer;
+function toast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+function openModal(html) { $('modalBox').innerHTML = html; $('modalOverlay').classList.add('open'); }
+function closeModal() { $('modalOverlay').classList.remove('open'); $('modalBox').innerHTML = ''; }
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+/* ================= Dashboard ================= */
+function renderDashboard() {
+  const today = todayStr();
+  const todaySched = schedules.filter((s) => s.date === today && s.status !== 'Batal');
+  const male = todaySched.filter((s) => (patientById(s.patientId) || {}).gender === 'Laki-laki').length;
+  const female = todaySched.filter((s) => (patientById(s.patientId) || {}).gender === 'Perempuan').length;
+  $('statMale').textContent = male;
+  $('statFemale').textContent = female;
+  $('statVisits').textContent = todaySched.length;
+  $('statRevenue').textContent = fmtRp(omsetForDate(today));
+
+  const ym = monthStr();
+  const finIn = finance.filter((f) => f.date.startsWith(ym) && f.type === 'Masuk').reduce((a, f) => a + Number(f.amount || 0), 0);
+  const finOut = finance.filter((f) => f.date.startsWith(ym) && f.type === 'Keluar').reduce((a, f) => a + Number(f.amount || 0), 0);
+  $('dashIn').textContent = fmtRp(finIn);
+  $('dashOut').textContent = fmtRp(finOut);
+  $('dashBalance').textContent = fmtRp(finIn - finOut);
+
+  const sorted = [...todaySched].sort((a, b) => a.time.localeCompare(b.time));
+  $('dashboardSchedule').innerHTML = sorted.length ? sorted.map((s) => `
+    <div class="list-item">
+      <div><div class="li-title">${esc(s.time)} — ${esc(patientName(s.patientId))}</div>
+      <div class="li-sub">${esc(s.service)} · ${esc(s.therapist)}</div></div>
+      ${statusBadge(s.status)}
+    </div>`).join('') : '<div class="empty">Tidak ada jadwal hari ini.</div>';
+
+  const recent = [...records].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5);
+  $('dashboardRecent').innerHTML = recent.length ? recent.map((r) => `
+    <div class="list-item">
+      <div><div class="li-title">${esc(patientName(r.patientId))}</div>
+      <div class="li-sub">${fmtDate(r.date)} · ${esc(r.bekamType)} · ${esc(r.therapist)}</div></div>
+    </div>`).join('') : '<div class="empty">Belum ada rekam medis.</div>';
+}
+const statusBadge = (st) => st === 'Selesai'
+  ? '<span class="badge badge-green">Selesai</span>'
+  : st === 'Batal' ? '<span class="badge badge-red">Batal</span>'
+  : '<span class="badge badge-blue">Terjadwal</span>';
+
+/* ================= Pasien ================= */
+function renderPatients() {
+  const q = ($('patientSearch').value || '').toLowerCase();
+  const list = patients.filter((p) =>
+    !q || p.name.toLowerCase().includes(q) || (p.phone || '').toLowerCase().includes(q));
+  $('patientTable').innerHTML = list.map((p) => `
+    <tr>
+      <td><strong>${esc(p.name)}</strong>${p.isSample ? '<span class="sample-tag">CONTOH</span>' : ''}<div class="sub">${esc(p.note || '')}</div></td>
+      <td>${esc(p.gender)}</td>
+      <td>${esc(p.phone || '-')}</td>
+      <td>${ageOf(p.birth)}</td>
+      <td>${esc(p.address || '-')}</td>
+      <td><div class="action-btns">
+        <button class="icon-btn" onclick="showPatientHistory('${p.id}')">Riwayat</button>
+        <button class="icon-btn" onclick="openPatientForm('${p.id}')">Edit</button>
+        <button class="icon-btn danger" onclick="deletePatient('${p.id}')">Hapus</button>
+      </div></td>
+    </tr>`).join('');
+  $('patientEmpty').style.display = list.length ? 'none' : 'block';
+}
+function openPatientForm(id) {
+  const p = id ? patientById(id) : null;
+  openModal(`
+    <h2>${p ? 'Edit Pasien' : 'Tambah Pasien'}</h2>
+    <form onsubmit="savePatient(event, '${id || ''}')">
+      <label>Nama Lengkap *<input type="text" id="fName" value="${esc(p ? p.name : '')}" required></label>
+      <div class="form-row">
+        <label>Jenis Kelamin *
+          <select id="fGender">
+            <option ${p && p.gender === 'Laki-laki' ? 'selected' : ''}>Laki-laki</option>
+            <option ${p && p.gender === 'Perempuan' ? 'selected' : ''}>Perempuan</option>
+          </select>
+        </label>
+        <label>Tanggal Lahir<input type="date" id="fBirth" value="${p ? p.birth || '' : ''}"></label>
+      </div>
+      <label>No. HP<input type="tel" id="fPhone" value="${esc(p ? p.phone || '' : '')}" placeholder="08xxxxxxxxxx"></label>
+      <label>Alamat<textarea id="fAddress" rows="2">${esc(p ? p.address || '' : '')}</textarea></label>
+      <label>Catatan<textarea id="fNote" rows="2">${esc(p ? p.note || '' : '')}</textarea></label>
+      <div class="form-actions">
+        <button type="button" class="btn" onclick="closeModal()">Batal</button>
+        <button type="submit" class="btn btn-primary">Simpan</button>
+      </div>
+    </form>`);
+}
+function savePatient(e, id) {
+  e.preventDefault();
+  const data = {
+    name: $('fName').value.trim(),
+    gender: $('fGender').value,
+    birth: $('fBirth').value,
+    phone: $('fPhone').value.trim(),
+    address: $('fAddress').value.trim(),
+    note: $('fNote').value.trim(),
+  };
+  if (id) {
+    Object.assign(patientById(id), data);
+    toast('Data pasien diperbarui');
+  } else {
+    patients.push({ id: uid(), ...data });
+    toast('Pasien baru ditambahkan');
+  }
+  save(K.patients, patients);
+  closeModal(); renderPatients();
+}
+function deletePatient(id) {
+  const p = patientById(id);
+  if (!p) return;
+  if (!confirm(`Hapus pasien "${p.name}"? Jadwal dan rekam medisnya tidak ikut terhapus.`)) return;
+  patients = patients.filter((x) => x.id !== id);
+  save(K.patients, patients);
+  renderPatients(); toast('Pasien dihapus');
+}
+function showPatientHistory(id) {
+  const p = patientById(id);
+  if (!p) return;
+  const recs = records.filter((r) => r.patientId === id).sort((a, b) => b.date.localeCompare(a.date));
+  const sch = schedules.filter((s) => s.patientId === id).sort((a, b) => b.date.localeCompare(a.date) || b.time.localeCompare(a.time));
+  openModal(`
+    <h2>Riwayat — ${esc(p.name)}</h2>
+    <p class="hint" style="margin-bottom:12px">${esc(p.gender)} · ${esc(p.phone || '-')} · ${ageOf(p.birth)}</p>
+    <h3 style="font-size:14px;margin-bottom:8px">🩺 Rekam Medis (${recs.length})</h3>
+    ${recs.length ? recs.map((r) => `
+      <div class="list-item" style="margin-bottom:8px">
+        <div><div class="li-title">${fmtDate(r.date)} — ${esc(r.bekamType)}</div>
+        <div class="li-sub">Keluhan: ${esc(r.complaint)}<br>Diagnosa: ${esc(r.diagnosis)} · Titik: ${esc(r.titik)} · ${esc(r.therapist)}</div></div>
+      </div>`).join('') : '<p class="hint">Belum ada rekam medis.</p>'}
+    <h3 style="font-size:14px;margin:14px 0 8px">📅 Jadwal (${sch.length})</h3>
+    ${sch.length ? sch.map((s) => `
+      <div class="list-item" style="margin-bottom:8px">
+        <div><div class="li-title">${fmtDate(s.date)} ${esc(s.time)} — ${esc(s.service)}</div>
+        <div class="li-sub">${esc(s.therapist)} · ${fmtRp(s.price || 0)}</div></div>
+        ${statusBadge(s.status)}
+      </div>`).join('') : '<p class="hint">Belum ada jadwal.</p>'}
+    <div class="form-actions" style="margin-top:14px"><button class="btn" onclick="closeModal()">Tutup</button></div>`);
+}
+
+/* ================= Jadwal ================= */
+function renderSchedules() {
+  const date = $('scheduleDate').value || todayStr();
+  const st = $('scheduleStatusFilter').value;
+  const list = schedules
+    .filter((s) => s.date === date && (!st || s.status === st))
+    .sort((a, b) => a.time.localeCompare(b.time));
+  $('scheduleTable').innerHTML = list.map((s) => `
+    <tr>
+      <td><strong>${esc(s.time)}</strong></td>
+      <td>${esc(patientName(s.patientId))}${(patientById(s.patientId) || {}).isSample ? '<span class="sample-tag">CONTOH</span>' : ''}</td>
+      <td>${esc(s.service)}<div class="sub">${fmtRp(s.price || 0)}</div></td>
+      <td>${esc(s.therapist)}</td>
+      <td>${statusBadge(s.status)}</td>
+      <td><div class="action-btns">
+        ${s.status === 'Terjadwal' ? `<button class="icon-btn" onclick="setScheduleStatus('${s.id}','Selesai')">✓ Selesai</button>
+        <button class="icon-btn" onclick="setScheduleStatus('${s.id}','Batal')">✕ Batal</button>` : ''}
+        <button class="icon-btn" onclick="openScheduleForm('${s.id}')">Edit</button>
+        <button class="icon-btn danger" onclick="deleteSchedule('${s.id}')">Hapus</button>
+      </div></td>
+    </tr>`).join('');
+  $('scheduleEmpty').style.display = list.length ? 'none' : 'block';
+}
+function setScheduleStatus(id, status) {
+  const s = schedules.find((x) => x.id === id);
+  if (!s) return;
+  s.status = status;
+  save(K.schedules, schedules);
+  renderSchedules(); renderDashboard();
+  toast('Jadwal ditandai ' + status);
+}
+function openScheduleForm(id) {
+  const s = id ? schedules.find((x) => x.id === id) : null;
+  const opts = (arr, sel) => arr.map((v) => `<option ${v === sel ? 'selected' : ''}>${esc(v)}</option>`).join('');
+  openModal(`
+    <h2>${s ? 'Edit Jadwal' : 'Tambah Jadwal'}</h2>
+    <form onsubmit="saveSchedule(event, '${id || ''}')">
+      <label>Pasien *
+        <select id="fPatient">${patients.map((p) => `<option value="${p.id}" ${s && s.patientId === p.id ? 'selected' : ''}>${esc(p.name)}</option>`).join('') || '<option value="">— Belum ada pasien —</option>'}</select>
+      </label>
+      <div class="form-row">
+        <label>Tanggal *<input type="date" id="fDate" value="${s ? s.date : todayStr()}" required></label>
+        <label>Jam *<input type="time" id="fTime" value="${s ? s.time : '09:00'}" required></label>
+      </div>
+      <div class="form-row">
+        <label>Terapis *
+          <input type="text" id="fTherapist" list="therapistList" value="${esc(s ? s.therapist : '')}" required placeholder="Nama terapis">
+          <datalist id="therapistList">${THERAPISTS.map((t) => `<option value="${esc(t)}">`).join('')}</datalist>
+        </label>
+        <label>Layanan *
+          <select id="fService" onchange="syncServicePrice()">${opts(SERVICES.map((x) => x.name), s ? s.service : SERVICES[0].name)}</select>
+        </label>
+      </div>
+      <div class="form-row">
+        <label>Harga (Rp)<input type="number" id="fPrice" min="0" value="${s ? s.price || 0 : SERVICES[0].price}"></label>
+        <label>Status
+          <select id="fStatus">${opts(['Terjadwal', 'Selesai', 'Batal'], s ? s.status : 'Terjadwal')}</select>
+        </label>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn" onclick="closeModal()">Batal</button>
+        <button type="submit" class="btn btn-primary">Simpan</button>
+      </div>
+    </form>`);
+}
+function syncServicePrice() {
+  const svc = SERVICES.find((x) => x.name === $('fService').value);
+  if (svc) $('fPrice').value = svc.price;
+}
+function saveSchedule(e, id) {
+  e.preventDefault();
+  const data = {
+    patientId: $('fPatient').value,
+    date: $('fDate').value,
+    time: $('fTime').value,
+    therapist: $('fTherapist').value.trim(),
+    service: $('fService').value,
+    price: Number($('fPrice').value) || 0,
+    status: $('fStatus').value,
+  };
+  if (!data.patientId) { toast('Tambahkan pasien dulu'); return; }
+  if (id) {
+    Object.assign(schedules.find((x) => x.id === id), data);
+    toast('Jadwal diperbarui');
+  } else {
+    schedules.push({ id: uid(), ...data });
+    toast('Jadwal baru ditambahkan');
+  }
+  save(K.schedules, schedules);
+  closeModal(); renderSchedules();
+}
+function deleteSchedule(id) {
+  if (!confirm('Hapus jadwal ini?')) return;
+  schedules = schedules.filter((x) => x.id !== id);
+  save(K.schedules, schedules);
+  renderSchedules(); toast('Jadwal dihapus');
+}
+
+/* ================= Rekam Medis ================= */
+function fillRecordPatientFilter() {
+  const sel = $('recordPatientFilter');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">Semua Pasien</option>' + patients.map((p) => `<option value="${p.id}">${esc(p.name)}</option>`).join('');
+  sel.value = cur;
+}
+function renderRecords() {
+  fillRecordPatientFilter();
+  const pid = $('recordPatientFilter').value;
+  const list = records.filter((r) => !pid || r.patientId === pid)
+    .sort((a, b) => b.date.localeCompare(a.date));
+  $('recordList').innerHTML = list.map((r) => `
+    <div class="record-card">
+      <h3>${esc(patientName(r.patientId))}${(patientById(r.patientId) || {}).isSample ? '<span class="sample-tag">CONTOH</span>' : ''}</h3>
+      <div class="meta">${fmtDate(r.date)} · Terapis: ${esc(r.therapist)}</div>
+      <dl>
+        <dt>Keluhan</dt><dd>${esc(r.complaint)}</dd>
+        <dt>Diagnosa</dt><dd>${esc(r.diagnosis)}</dd>
+        <dt>Jenis Bekam</dt><dd>${esc(r.bekamType)}</dd>
+        <dt>Titik Bekam</dt><dd>${esc(r.titik)}</dd>
+        <dt>Catatan</dt><dd>${esc(r.note || '-')}</dd>
+      </dl>
+      <div class="record-actions">
+        <button class="icon-btn" onclick="openRecordForm('${r.id}')">Edit</button>
+        <button class="icon-btn danger" onclick="deleteRecord('${r.id}')">Hapus</button>
+      </div>
+    </div>`).join('');
+  $('recordEmpty').style.display = list.length ? 'none' : 'block';
+}
+function openRecordForm(id) {
+  const r = id ? records.find((x) => x.id === id) : null;
+  openModal(`
+    <h2>${r ? 'Edit Rekam Medis' : 'Tambah Rekam Medis'}</h2>
+    <form onsubmit="saveRecord(event, '${id || ''}')">
+      <label>Pasien *
+        <select id="fPatient">${patients.map((p) => `<option value="${p.id}" ${r && r.patientId === p.id ? 'selected' : ''}>${esc(p.name)}</option>`).join('') || '<option value="">— Belum ada pasien —</option>'}</select>
+      </label>
+      <div class="form-row">
+        <label>Tanggal *<input type="date" id="fDate" value="${r ? r.date : todayStr()}" required></label>
+        <label>Terapis *
+          <input type="text" id="fTherapist" list="therapistList2" value="${esc(r ? r.therapist : '')}" required>
+          <datalist id="therapistList2">${THERAPISTS.map((t) => `<option value="${esc(t)}">`).join('')}</datalist>
+        </label>
+      </div>
+      <label>Keluhan *<textarea id="fComplaint" rows="2" required>${esc(r ? r.complaint : '')}</textarea></label>
+      <label>Diagnosa<textarea id="fDiagnosis" rows="2">${esc(r ? r.diagnosis : '')}</textarea></label>
+      <div class="form-row">
+        <label>Jenis Bekam
+          <select id="fBekamType">
+            ${['Bekam Basah', 'Bekam Kering', 'Bekam Sunnah', 'Bekam Api'].map((v) => `<option ${r && r.bekamType === v ? 'selected' : ''}>${v}</option>`).join('')}
+          </select>
+        </label>
+        <label>Titik Bekam<input type="text" id="fTitik" value="${esc(r ? r.titik : '')}" placeholder="Contoh: punggung atas, bahu"></label>
+      </div>
+      <label>Catatan<textarea id="fNote" rows="2">${esc(r ? r.note || '' : '')}</textarea></label>
+      <div class="form-actions">
+        <button type="button" class="btn" onclick="closeModal()">Batal</button>
+        <button type="submit" class="btn btn-primary">Simpan</button>
+      </div>
+    </form>`);
+}
+function saveRecord(e, id) {
+  e.preventDefault();
+  const data = {
+    patientId: $('fPatient').value,
+    date: $('fDate').value,
+    therapist: $('fTherapist').value.trim(),
+    complaint: $('fComplaint').value.trim(),
+    diagnosis: $('fDiagnosis').value.trim(),
+    bekamType: $('fBekamType').value,
+    titik: $('fTitik').value.trim(),
+    note: $('fNote').value.trim(),
+  };
+  if (!data.patientId) { toast('Tambahkan pasien dulu'); return; }
+  if (id) {
+    Object.assign(records.find((x) => x.id === id), data);
+    toast('Rekam medis diperbarui');
+  } else {
+    records.push({ id: uid(), ...data });
+    toast('Rekam medis ditambahkan');
+  }
+  save(K.records, records);
+  closeModal(); renderRecords();
+}
+function deleteRecord(id) {
+  if (!confirm('Hapus rekam medis ini?')) return;
+  records = records.filter((x) => x.id !== id);
+  save(K.records, records);
+  renderRecords(); toast('Rekam medis dihapus');
+}
+
+/* ================= Penjualan ================= */
+function renderSales() {
+  const ym = $('salesMonth').value || monthStr();
+  const list = sales.filter((s) => s.date.startsWith(ym)).sort((a, b) => b.date.localeCompare(a.date));
+  const total = list.reduce((a, s) => a + saleTotal(s), 0);
+  $('salesTotal').textContent = fmtRp(total);
+  $('salesCount').textContent = list.length + ' transaksi · ' + fmtMonth(ym);
+  $('salesTable').innerHTML = list.map((s) => `
+    <tr>
+      <td>${fmtDate(s.date)}</td>
+      <td><strong>${esc(s.item)}</strong>${s.isSample ? '<span class="sample-tag">CONTOH</span>' : ''}</td>
+      <td>${s.patientId ? esc(patientName(s.patientId)) : '—'}</td>
+      <td>${s.qty}</td>
+      <td>${fmtRp(s.price)}</td>
+      <td><strong>${fmtRp(saleTotal(s))}</strong></td>
+      <td><button class="icon-btn danger" onclick="deleteSale('${s.id}')">Hapus</button></td>
+    </tr>`).join('');
+  $('salesEmpty').style.display = list.length ? 'none' : 'block';
+}
+function openSaleForm() {
+  openModal(`
+    <h2>Catat Penjualan</h2>
+    <form onsubmit="saveSale(event)">
+      <div class="form-row">
+        <label>Tanggal *<input type="date" id="fDate" value="${todayStr()}" required></label>
+        <label>Pasien (opsional)
+          <select id="fPatient"><option value="">— Tanpa pasien —</option>
+          ${patients.map((p) => `<option value="${p.id}">${esc(p.name)}</option>`).join('')}</select>
+        </label>
+      </div>
+      <label>Item Layanan / Produk *
+        <select id="fItem" onchange="syncSalePrice()">
+          ${SERVICES.map((x) => `<option value="${esc(x.name)}" data-price="${x.price}">${esc(x.name)} — ${fmtRp(x.price)}</option>`).join('')}
+          <option value="__custom__">Lainnya (isi manual)...</option>
+        </select>
+      </label>
+      <label id="customItemWrap" style="display:none">Nama Item *<input type="text" id="fCustomItem" placeholder="Nama item"></label>
+      <div class="form-row">
+        <label>Jumlah *<input type="number" id="fQty" min="1" value="1" oninput="calcSaleTotal()"></label>
+        <label>Harga Satuan (Rp) *<input type="number" id="fPrice" min="0" value="${SERVICES[0].price}" oninput="calcSaleTotal()"></label>
+      </div>
+      <p class="hint">Total: <strong id="saleTotalPreview">${fmtRp(SERVICES[0].price)}</strong></p>
+      <div class="form-actions">
+        <button type="button" class="btn" onclick="closeModal()">Batal</button>
+        <button type="submit" class="btn btn-primary">Simpan</button>
+      </div>
+    </form>`);
+}
+function syncSalePrice() {
+  const sel = $('fItem');
+  const isCustom = sel.value === '__custom__';
+  $('customItemWrap').style.display = isCustom ? 'block' : 'none';
+  if (!isCustom) {
+    const opt = sel.options[sel.selectedIndex];
+    $('fPrice').value = opt.dataset.price || 0;
+  }
+  calcSaleTotal();
+}
+function calcSaleTotal() {
+  const t = (Number($('fQty').value) || 0) * (Number($('fPrice').value) || 0);
+  $('saleTotalPreview').textContent = fmtRp(t);
+}
+function saveSale(e) {
+  e.preventDefault();
+  const isCustom = $('fItem').value === '__custom__';
+  const item = isCustom ? $('fCustomItem').value.trim() : $('fItem').value;
+  if (!item) { toast('Isi nama item'); return; }
+  sales.push({
+    id: uid(),
+    date: $('fDate').value,
+    patientId: $('fPatient').value || null,
+    item,
+    qty: Number($('fQty').value) || 1,
+    price: Number($('fPrice').value) || 0,
+  });
+  save(K.sales, sales);
+  closeModal(); renderSales(); toast('Penjualan dicatat');
+}
+function deleteSale(id) {
+  if (!confirm('Hapus penjualan ini?')) return;
+  sales = sales.filter((x) => x.id !== id);
+  save(K.sales, sales);
+  renderSales(); toast('Penjualan dihapus');
+}
+
+/* ================= Keuangan ================= */
+function onFinPeriodChange() {
+  const p = $('finPeriod').value;
+  $('finDate').style.display = p === 'harian' || p === 'mingguan' ? 'block' : 'none';
+  $('finMonth').style.display = p === 'bulanan' ? 'block' : 'none';
+  $('finYear').style.display = p === 'tahunan' ? 'block' : 'none';
+  renderFinance();
+}
+function finPeriodRange() {
+  const p = $('finPeriod').value;
+  if (p === 'harian') {
+    const d = $('finDate').value || todayStr();
+    return { label: fmtDate(d), test: (f) => f.date === d };
+  }
+  if (p === 'mingguan') {
+    const base = new Date(($('finDate').value || todayStr()) + 'T00:00:00');
+    const day = (base.getDay() + 6) % 7; // Senin = 0
+    const start = new Date(base); start.setDate(base.getDate() - day);
+    const end = new Date(start); end.setDate(start.getDate() + 6);
+    return { label: fmtDate(dstr(start)) + ' – ' + fmtDate(dstr(end)), test: (f) => f.date >= dstr(start) && f.date <= dstr(end) };
+  }
+  if (p === 'tahunan') {
+    const y = $('finYear').value || String(new Date().getFullYear());
+    return { label: 'Tahun ' + y, test: (f) => f.date.startsWith(y + '-') };
+  }
+  const ym = $('finMonth').value || monthStr();
+  return { label: fmtMonth(ym), test: (f) => f.date.startsWith(ym) };
+}
+function renderFinance() {
+  const { label, test } = finPeriodRange();
+  document.querySelectorAll('.fin-period-label').forEach((el) => el.textContent = label);
+  $('finPeriodLabel').textContent = label;
+  const list = finance.filter(test).sort((a, b) => b.date.localeCompare(a.date));
+  const totalIn = list.filter((f) => f.type === 'Masuk').reduce((a, f) => a + Number(f.amount || 0), 0);
+  const totalOut = list.filter((f) => f.type === 'Keluar').reduce((a, f) => a + Number(f.amount || 0), 0);
+  $('finIn').textContent = fmtRp(totalIn);
+  $('finOut').textContent = fmtRp(totalOut);
+  $('finBalance').textContent = fmtRp(totalIn - totalOut);
+  $('financeTable').innerHTML = list.map((f) => `
+    <tr>
+      <td>${fmtDate(f.date)}</td>
+      <td><span class="badge ${f.type === 'Masuk' ? 'badge-green' : 'badge-red'}">${f.type}</span></td>
+      <td>${esc(f.category)}</td>
+      <td>${esc(f.desc)}${f.isSample ? '<span class="sample-tag">CONTOH</span>' : ''}</td>
+      <td class="${f.type === 'Masuk' ? 'text-green' : 'text-red'}"><strong>${f.type === 'Masuk' ? '+' : '−'} ${fmtRp(f.amount)}</strong></td>
+      <td><button class="icon-btn danger" onclick="deleteFinance('${f.id}')">Hapus</button></td>
+    </tr>`).join('');
+  $('financeEmpty').style.display = list.length ? 'none' : 'block';
+}
+function openFinanceForm() {
+  openModal(`
+    <h2>Catat Transaksi Keuangan</h2>
+    <form onsubmit="saveFinance(event)">
+      <div class="form-row">
+        <label>Tanggal *<input type="date" id="fDate" value="${todayStr()}" required></label>
+        <label>Jenis *
+          <select id="fType" onchange="syncFinCategories()">
+            <option>Masuk</option><option>Keluar</option>
+          </select>
+        </label>
+      </div>
+      <label>Kategori *
+        <select id="fCategory">${FIN_CATEGORIES_IN.map((c) => `<option>${c}</option>`).join('')}</select>
+      </label>
+      <label>Keterangan *<input type="text" id="fDesc" required placeholder="Contoh: Penjualan layanan / Beli alat bekam"></label>
+      <label>Jumlah (Rp) *<input type="number" id="fAmount" min="0" required placeholder="0"></label>
+      <div class="form-actions">
+        <button type="button" class="btn" onclick="closeModal()">Batal</button>
+        <button type="submit" class="btn btn-primary">Simpan</button>
+      </div>
+    </form>`);
+}
+function syncFinCategories() {
+  const cats = $('fType').value === 'Masuk' ? FIN_CATEGORIES_IN : FIN_CATEGORIES_OUT;
+  $('fCategory').innerHTML = cats.map((c) => `<option>${c}</option>`).join('');
+}
+function saveFinance(e) {
+  e.preventDefault();
+  finance.push({
+    id: uid(),
+    date: $('fDate').value,
+    type: $('fType').value,
+    category: $('fCategory').value,
+    desc: $('fDesc').value.trim(),
+    amount: Number($('fAmount').value) || 0,
+  });
+  save(K.finance, finance);
+  closeModal(); renderFinance(); toast('Transaksi dicatat');
+}
+function deleteFinance(id) {
+  if (!confirm('Hapus transaksi ini?')) return;
+  finance = finance.filter((x) => x.id !== id);
+  save(K.finance, finance);
+  renderFinance(); toast('Transaksi dihapus');
+}
+
+/* ================= Laporan Bonus ================= */
+function saveBonusRate() {
+  bonusRate = Math.min(100, Math.max(0, Number($('bonusRate').value) || 0));
+  localStorage.setItem(K.bonusRate, String(bonusRate));
+}
+function renderBonus() {
+  const ym = $('bonusMonth').value || monthStr();
+  $('bonusRate').value = bonusRate;
+  const done = schedules.filter((s) => s.date.startsWith(ym) && s.status === 'Selesai');
+  const byTherapist = {};
+  done.forEach((s) => {
+    byTherapist[s.therapist] = byTherapist[s.therapist] || { count: 0, omset: 0 };
+    byTherapist[s.therapist].count++;
+    byTherapist[s.therapist].omset += Number(s.price || 0);
+  });
+  const rows = Object.entries(byTherapist).sort((a, b) => b[1].omset - a[1].omset);
+  $('bonusTable').innerHTML = rows.map(([name, v]) => `
+    <tr>
+      <td><strong>${esc(name)}</strong></td>
+      <td>${v.count} layanan</td>
+      <td>${fmtRp(v.omset)}</td>
+      <td>${bonusRate}%</td>
+      <td><strong class="text-green">${fmtRp(Math.round(v.omset * bonusRate / 100))}</strong></td>
+    </tr>`).join('');
+  $('bonusEmpty').style.display = rows.length ? 'none' : 'block';
+}
+
+/* ================= Laporan Setor Omset ================= */
+function renderSetor() {
+  const ym = $('setorMonth').value || monthStr();
+  const totalDays = daysInMonth(ym);
+  let monthTotal = 0, setorCount = 0;
+  let html = '';
+  for (let d = 1; d <= totalDays; d++) {
+    const date = ym + '-' + pad(d);
+    const salesTotal = sales.filter((s) => s.date === date).reduce((a, s) => a + saleTotal(s), 0);
+    const otherIn = finance.filter((f) => f.date === date && f.type === 'Masuk' && f.category !== 'Penjualan')
+      .reduce((a, f) => a + Number(f.amount || 0), 0);
+    const total = salesTotal + otherIn;
+    monthTotal += total;
+    const done = !!setor[date];
+    if (done) setorCount++;
+    html += `<tr>
+      <td><strong>${fmtDate(date)}</strong></td>
+      <td>${fmtRp(salesTotal)}</td>
+      <td>${fmtRp(otherIn)}</td>
+      <td><strong>${fmtRp(total)}</strong></td>
+      <td><button class="badge ${done ? 'badge-green' : 'badge-amber'}" style="cursor:pointer;border:none" onclick="toggleSetor('${date}')" title="Klik untuk mengubah status">${done ? '✓ Sudah Disetor' : 'Belum Disetor'}</button></td>
+    </tr>`;
+  }
+  $('setorTable').innerHTML = html;
+  $('setorTotal').textContent = fmtRp(monthTotal);
+  $('setorSummary').textContent = setorCount + ' dari ' + totalDays + ' hari sudah disetor · ' + fmtMonth(ym);
+}
+function toggleSetor(date) {
+  setor[date] = !setor[date];
+  if (!setor[date]) delete setor[date];
+  save(K.setor, setor);
+  renderSetor();
+}
+
+/* ================= Pengaturan ================= */
+function renderSettings() {
+  $('setName').value = settings.name || 'Klinik Bekam BRHC';
+  $('setAddress').value = settings.address || '';
+  $('setWa').value = settings.wa || '';
+}
+function saveSettings(e) {
+  e.preventDefault();
+  settings = {
+    name: $('setName').value.trim() || 'Klinik Bekam BRHC',
+    address: $('setAddress').value.trim(),
+    wa: $('setWa').value.trim(),
+  };
+  save(K.settings, settings);
+  applySettings();
+  toast('Pengaturan disimpan');
+}
+function applySettings() {
+  $('brandName').textContent = settings.name || 'Klinik Bekam BRHC';
+  document.title = (settings.name || 'Klinik Bekam BRHC') + ' — Manajemen Klinik';
+  $('sidebarFoot').innerHTML = [esc(settings.address || ''), settings.wa ? 'WA: ' + esc(settings.wa) : '']
+    .filter(Boolean).join('<br>') || 'Atur alamat & WA di Pengaturan';
+}
+function exportData() {
+  const data = { app: 'Klinik Bekam BRHC', exportedAt: new Date().toISOString(), patients, schedules, records, sales, finance, settings, setor, bonusRate };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'brhc-backup-' + todayStr() + '.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('Data diekspor');
+}
+function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+      if (Array.isArray(data.patients)) patients = data.patients;
+      if (Array.isArray(data.schedules)) schedules = data.schedules;
+      if (Array.isArray(data.records)) records = data.records;
+      if (Array.isArray(data.sales)) sales = data.sales;
+      if (Array.isArray(data.finance)) finance = data.finance;
+      if (data.settings) settings = data.settings;
+      if (data.setor) setor = data.setor;
+      if (data.bonusRate != null) bonusRate = Number(data.bonusRate) || 10;
+      persistAll();
+      localStorage.setItem(K.bonusRate, String(bonusRate));
+      localStorage.setItem(K.seeded, '1');
+      applySettings(); goPage('dashboard');
+      toast('Data berhasil diimpor');
+    } catch (err) { toast('File tidak valid, impor gagal'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+function removeSampleData() {
+  const count = (arr) => arr.filter((x) => x.isSample).length;
+  const total = count(patients) + count(schedules) + count(records) + count(sales) + count(finance);
+  if (!total) { toast('Tidak ada data contoh'); return; }
+  if (!confirm(`Hapus ${total} data contoh? Data asli Anda tidak ikut terhapus.`)) return;
+  patients = patients.filter((x) => !x.isSample);
+  schedules = schedules.filter((x) => !x.isSample);
+  records = records.filter((x) => !x.isSample);
+  sales = sales.filter((x) => !x.isSample);
+  finance = finance.filter((x) => !x.isSample);
+  persistAll(); goPage('dashboard');
+  toast('Data contoh dihapus');
+}
+function resetAllData() {
+  if (!confirm('Hapus SEMUA data (pasien, jadwal, rekam medis, penjualan, keuangan)? Data akan kembali ke data contoh awal.')) return;
+  Object.values(K).forEach((k) => localStorage.removeItem(k));
+  location.reload();
+}
+
+/* ================= Init ================= */
+(function init() {
+  seedSampleData();
+  applySettings();
+  $('todayLabel').textContent = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  $('scheduleDate').value = todayStr();
+  $('salesMonth').value = monthStr();
+  $('finDate').value = todayStr();
+  $('finMonth').value = monthStr();
+  $('finYear').value = new Date().getFullYear();
+  $('bonusMonth').value = monthStr();
+  $('setorMonth').value = monthStr();
+  onFinPeriodChange();
+  renderDashboard();
+})();
+
+</script>
+</body>
+</html>
